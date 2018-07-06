@@ -87,8 +87,9 @@ export class DealerService {
     this.distribution$.next('p');
   }
 
-  public stay(): void {
-    console.log('Stay home!');
+  public dealToDealer(): void {
+    // add a dealer card to the distribution subject
+    this.distribution$.next('d');
   }
 }
 

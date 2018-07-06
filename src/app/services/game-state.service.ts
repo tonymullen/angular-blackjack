@@ -13,6 +13,8 @@ export class GameStateService {
   private dealerScore: number;
   private playerHasAce: boolean;
   private dealerHasAce: boolean;
+  private playerStays: boolean;
+  private dealerStays: boolean;
 
   private _gameState: States;
   private _playerCards: Card[] = [];
@@ -48,6 +50,9 @@ export class GameStateService {
           this._dealerCards.push(card);
           if (card.value === 1) { this.dealerHasAce = true }
           this.dealerScore += card.value;
+          if ( this.dealerShouldHit() ) {
+            this.dealerService.dealToDealer();
+          }
         } else if ( c[1][0] === 'p') {
           this._playerCards.push(card);
           if (card.value === 1) { this.playerHasAce = true }
@@ -107,7 +112,7 @@ export class GameStateService {
       } else {
         this.gameState = 'Dealt';
       }
-    } 
+    }
     // After the first four cards are dealt
     else if ( this.playerBust() ) {
       setTimeout(() => { 
@@ -121,7 +126,22 @@ export class GameStateService {
        }, 1000)
     }
 
-    // Otherwise
+    if ( this.playerStays &&  this.dealerStays ) {
+      if ( this.playerScore <= 11 && this.playerHasAce ) {
+        this.playerScore += 10;
+      }
+      if ( this.dealerScore <= 11 && this.dealerHasAce ) {
+        this.dealerScore += 10;
+      }
+      if ( this.playerScore > this.dealerScore ) {
+        this.gameState = 'Win';
+      } else if ( this.playerScore < this.dealerScore ) {
+        this.gameState = 'Lose';
+      } else {
+        this.gameState = 'Tie';
+      }
+      this.restart();
+    }
   }
 
   playerBust(): boolean {
@@ -172,8 +192,35 @@ export class GameStateService {
     this.dealerScore = 0;
     this.playerHasAce = false;
     this.dealerHasAce = false;
+    this.playerStays = false;
+    this.dealerStays = false;
     this.gameState = 'Start'
     this.setUpSubscription();
+  }
+
+  public deal(): void {
+    this.dealerService.deal();
+    this.gameState = 'Dealing';
+  }
+
+  public hit(): void {
+    this.dealerService.hit();
+  }
+
+  dealerShouldHit(): boolean {
+    return ( this.playerStays && 
+          (this.dealerScore < 17 || 
+          (this.dealerHasAce && this.dealerScore < 27)))
+  }
+
+  public stay(): void {
+    this.playerStays = true;
+    this.gameState = 'Stay';
+    if ( this.dealerShouldHit() ) {
+      this.dealerService.dealToDealer();
+    } else {
+      this.calculateGameState();
+    }
   }
 }
 
