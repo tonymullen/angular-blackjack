@@ -11,7 +11,7 @@ export class ButtonPanelComponent {
 
   constructor(
     private dealerService: DealerService,
-    private gameStateService: GameStateService
+    public gameStateService: GameStateService
   ) {}  
 
   public deal(): void {

@@ -9,7 +9,7 @@ import { GameStateService } from '../services/game-state.service';
 })
 export class HandComponent implements OnInit {
   @Input() dealer:boolean = false;
-  private cards: Card[] = [];
+  public cards: Card[] = [];
 
   constructor(
     private gameStateService: GameStateService
