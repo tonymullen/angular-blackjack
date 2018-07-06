@@ -31,7 +31,6 @@ export class HandComponent implements OnInit {
     if (this.dealer) {
       this.cardComponents.changes.subscribe(
         () =>{
-          console.log(this.cardComponents.length);
           if ( this.cardComponents.length === 2 ) {
             this.cardComponents.first.rotate();
             this.cdRef.detectChanges(); 

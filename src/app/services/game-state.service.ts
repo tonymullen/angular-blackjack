@@ -46,6 +46,7 @@ export class GameStateService {
   }
 
   setUpSubscription(): void {
+    // Subscribe to the deal$ observable
     this.dealerService.deal$.subscribe(c => {
       // Every time an item is received from deal$
       // Make sure it's a card, not a trigger
@@ -88,6 +89,7 @@ export class GameStateService {
   }
 
   calculateGameState():void {
+    // If exactly 4 cards have been dealt
     if (this.firstCardsJustDealt()) {
 
       // Blackjack
@@ -131,22 +133,44 @@ export class GameStateService {
       } else {
         this.gameState = 'Dealt';
       }
+      // In case both stay after 2 cards
+      if ( this.playerStays &&  this.dealerStays ) {
+        this.scoreAfterBothStay();
+      }
     }
+
     // After the first four cards are dealt
-    else if ( this.playerBust() ) {
-      setTimeout(() => { 
-        this.gameState = 'Lose';
-        this.restart();
-       }, MESSSAGE_WAIT)
-    } else if ( this.dealerBust() ) {
+    else {
+      // If player and dealer have stayed
+      if ( this.playerStays &&  this.dealerStays ) {
+        this.scoreAfterBothStay();
+      }
+
+      // Otherwise, if bust before staying
+      else if ( this.playerBust() ) {
+        this.gameState = 'Bust';
+        setTimeout(() => { 
+          this.gameState = 'Lose';
+          this.restart();
+        }, MESSSAGE_WAIT)
+      } else if ( this.dealerBust() ) {
+        setTimeout(() => { 
+          this.gameState = 'Win';
+          this.restart();
+        }, MESSSAGE_WAIT)
+      }
+    }
+  }
+
+  scoreAfterBothStay():void {
+    console.log('After stay');
+    if ( this.dealerBust() ) {
+      this.gameState = 'Bust';
       setTimeout(() => { 
         this.gameState = 'Win';
         this.restart();
-       }, MESSSAGE_WAIT)
-    }
-
-    console.log('Dealer stays: ', this.dealerStays);
-    if ( this.playerStays &&  this.dealerStays ) {
+      }, MESSSAGE_WAIT)
+    } else {
       if ( this.playerScore <= 11 && this.playerHasAce ) {
         this.playerScore += 10;
       }
@@ -156,13 +180,12 @@ export class GameStateService {
       if ( this.playerScore > this.dealerScore ) {
         this.gameState = 'Win';
       } else if ( this.playerScore < this.dealerScore ) {
-        console.log('case 4');
         this.gameState = 'Lose';
       } else {
         this.gameState = 'Tie';
       }
-      this.restart();
     }
+    this.restart();
   }
 
   playerBust(): boolean {
@@ -236,6 +259,7 @@ export class GameStateService {
   }
 
   restart(): void {
+    this.logLastGame();
     setTimeout(() => {
       this.dealerService.freshDeck();
       // clear the arrays while keeping the reference
@@ -243,6 +267,22 @@ export class GameStateService {
       this._dealerCards.length = 0;
       this.setup();
     }, RESTART_WAIT);
+  }
+
+  logLastGame(): void {
+    console.log('Game')
+    console.log(`Dealer cards: `);
+    this._dealerCards.forEach(c => {
+      console.log(`    ${c.face} of ${c.suit}s`);
+    })
+    console.log(`Player cards: `);
+    this._playerCards.forEach(c => {
+      console.log(`    ${c.face} of ${c.suit}s`);
+    })
+    console.log(`Dealer total: ${this.dealerScore}`);
+    console.log(`Player total: ${this.playerScore}`);
+    console.log(`Final state: ${this.gameState}`);
+    console.log();
   }
 }
 

@@ -24,24 +24,6 @@ export class DealerService {
   }
 
   public freshDeck(): void {
-    // this.deck = [
-    //   new Card('heart', 'king'),
-    //   new Card('spade', '10'),
-    //   new Card('spade', '1'),
-    //   new Card('heart', '1'),     
-    // ]
-    // this.deck = [
-    //   new Card('heart', '2'),
-    //   new Card('spade', 'king'),
-    //   new Card('spade', '1'),
-    //   new Card('heart', '1'),     
-    // ]
-    // this.deck = [
-    //   new Card('heart', 'king'),
-    //   new Card('spade', '2'),
-    //   new Card('spade', '1'),
-    //   new Card('heart', '1'),     
-    // ]
     this.distribution$ = new Subject<string>();
     this.trigger$ = new Subject<boolean>();
 
