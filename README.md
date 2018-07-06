@@ -3,13 +3,13 @@
 A simple demo Blackjack player written in Angular 6 using RxJS observables.
 
 
-## Playing card images from:
+#### Playing card images from:
 https://github.com/htdebeer/SVG-cards
 
-## NGX flip
+### NGX flip
 https://github.com/ritsrivastava01/ngxFlip
 
-## Placeholder logo
+### Placeholder logo
 https://www.svgrepo.com/svg/68510/playing-cards
 
 
