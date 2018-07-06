@@ -2,6 +2,7 @@
 
 A simple demo Blackjack player written in Angular 6 using RxJS observables.
 
+https://angular-blackjack.herokuapp.com/
 
 #### Playing card images from:
 https://github.com/htdebeer/SVG-cards
