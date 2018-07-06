@@ -1,5 +1,20 @@
 # Blackjack
 
+A simple demo Blackjack player written in Angular 6 using RxJS observables.
+
+
+## Playing card images from:
+https://github.com/htdebeer/SVG-cards
+
+## NGX flip
+https://github.com/ritsrivastava01/ngxFlip
+
+## Placeholder logo
+https://www.svgrepo.com/svg/68510/playing-cards
+
+
+## Angular boilerplate stuff
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.0.8.
 
 ## Development server
@@ -25,3 +40,5 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+

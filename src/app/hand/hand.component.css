@@ -1,0 +1,17 @@
+div.hand {
+    display: inline-block;
+    border: 1px white solid;
+    border-radius: 10px;
+    background-color: green;
+    padding: 5px;
+    margin: 5px auto 5px auto;
+}
+
+div.hand div {
+    display: flex;
+}
+
+img {
+    height: 145px;
+    width: 100px;
+}
