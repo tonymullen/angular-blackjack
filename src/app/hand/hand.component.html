@@ -4,7 +4,7 @@
       <img src="assets/placeholder.png">
     </div>
     <div *ngFor="let card of cards; index as i; first as isFirst">
-      <app-card flip={{card.flip}} suit={{card.suit}} face={{card.face}}></app-card>
+      <app-card [flip]="card.flip" suit={{card.suit}} face={{card.face}}></app-card>
     </div>
   </div>
 </div>

@@ -1,6 +1,9 @@
 import { Injectable  } from '@angular/core';
 import { DealerService, Card } from './dealer.service';
 
+const RESTART_WAIT: number = 3000;
+const MESSSAGE_WAIT: number = 1000;
+
 enum States {
   Start,  Dealing,  Dealt,  Stay, Blackjack,  Win,  Lose, Tie,  Bust
 };
@@ -44,15 +47,28 @@ export class GameStateService {
 
   setUpSubscription(): void {
     this.dealerService.deal$.subscribe(c => {
+      // Every time an item is received from deal$
+      // Make sure it's a card, not a trigger
       if(Array.isArray(c)) {
+        // Extract card from observable
         let card = c[1][1]
+
+        // Dealer card received
         if (c[1][0] === 'd') {
           this._dealerCards.push(card);
           if (card.value === 1) { this.dealerHasAce = true }
           this.dealerScore += card.value;
+
           if ( this.dealerShouldHit() ) {
-            this.dealerService.dealToDealer();
+            setTimeout(() => {
+              this.dealerService.dealToDealer();
+            }, MESSSAGE_WAIT);
+          } else if ( this.playerStays ) {
+            this.dealerStays = true;
+            this.calculateGameState();
           }
+
+        // Player card received
         } else if ( c[1][0] === 'p') {
           this._playerCards.push(card);
           if (card.value === 1) { this.playerHasAce = true }
@@ -64,32 +80,35 @@ export class GameStateService {
         if (this.bust()){
           this.gameState = 'Bust';
         }
-        this.calculateGameState()
+
+        // Update game state
+        this.calculateGameState();
       }
     });
   }
 
   calculateGameState():void {
     if (this.firstCardsJustDealt()) {
+
       // Blackjack
       if ( this.blackjack()) {
         if (!this.playerBlackjack()) {
           setTimeout(() => { 
             this.gameState = 'Lose';
             this.restart();
-           }, 1000)
+           }, MESSSAGE_WAIT)
         }
         else if (!this.dealerBlackjack()) {
           setTimeout(() => { 
             this.gameState = 'Win';
             this.restart();
-           }, 1000)
+           }, MESSSAGE_WAIT)
         }
         else {
           setTimeout(() => { 
             this.gameState = 'Tie';
             this.restart();
-           }, 1000)
+           }, MESSSAGE_WAIT)
         }
       }
       // Bust
@@ -100,14 +119,14 @@ export class GameStateService {
           setTimeout(() => { 
             this.gameState = 'Win';
             this.restart();
-           }, 1000)
+           }, MESSSAGE_WAIT)
         }
 
         if(!this.dealerBust()) {
           setTimeout(() => { 
             this.gameState = 'Lose';
             this.restart();
-           }, 1000)
+           }, MESSSAGE_WAIT)
         }
       } else {
         this.gameState = 'Dealt';
@@ -118,14 +137,15 @@ export class GameStateService {
       setTimeout(() => { 
         this.gameState = 'Lose';
         this.restart();
-       }, 1000)
+       }, MESSSAGE_WAIT)
     } else if ( this.dealerBust() ) {
       setTimeout(() => { 
         this.gameState = 'Win';
         this.restart();
-       }, 1000)
+       }, MESSSAGE_WAIT)
     }
 
+    console.log('Dealer stays: ', this.dealerStays);
     if ( this.playerStays &&  this.dealerStays ) {
       if ( this.playerScore <= 11 && this.playerHasAce ) {
         this.playerScore += 10;
@@ -136,6 +156,7 @@ export class GameStateService {
       if ( this.playerScore > this.dealerScore ) {
         this.gameState = 'Win';
       } else if ( this.playerScore < this.dealerScore ) {
+        console.log('case 4');
         this.gameState = 'Lose';
       } else {
         this.gameState = 'Tie';
@@ -177,14 +198,30 @@ export class GameStateService {
             this._dealerCards.length === 2)
   }
 
-  restart(): void {
-    setTimeout(() => {
-      this.dealerService.freshDeck();
-      // clear the arrays while keeping the reference
-      this._playerCards.length = 0;
-      this._dealerCards.length = 0;
-      this.setup();
-    }, 3000);
+  public deal(): void {
+    this.dealerService.deal();
+    this.gameState = 'Dealing';
+  }
+
+  public hit(): void {
+    this.dealerService.hit();
+  }
+
+  public stay(): void {
+    this.playerStays = true;
+    this.gameState = 'Stay';
+    if ( this.dealerShouldHit() ) {
+      this.dealerService.dealToDealer();
+    } else {
+      this.dealerStays = true;
+      this.calculateGameState();
+    }
+  }
+
+  dealerShouldHit(): boolean {
+    return ( this.playerStays && 
+          (this.dealerScore < 17 || 
+          (this.dealerHasAce && this.dealerScore < 27)));
   }
 
   setup(): void {
@@ -198,29 +235,14 @@ export class GameStateService {
     this.setUpSubscription();
   }
 
-  public deal(): void {
-    this.dealerService.deal();
-    this.gameState = 'Dealing';
-  }
-
-  public hit(): void {
-    this.dealerService.hit();
-  }
-
-  dealerShouldHit(): boolean {
-    return ( this.playerStays && 
-          (this.dealerScore < 17 || 
-          (this.dealerHasAce && this.dealerScore < 27)))
-  }
-
-  public stay(): void {
-    this.playerStays = true;
-    this.gameState = 'Stay';
-    if ( this.dealerShouldHit() ) {
-      this.dealerService.dealToDealer();
-    } else {
-      this.calculateGameState();
-    }
+  restart(): void {
+    setTimeout(() => {
+      this.dealerService.freshDeck();
+      // clear the arrays while keeping the reference
+      this._playerCards.length = 0;
+      this._dealerCards.length = 0;
+      this.setup();
+    }, RESTART_WAIT);
   }
 }
 

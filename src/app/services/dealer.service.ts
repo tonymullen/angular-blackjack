@@ -55,6 +55,7 @@ export class DealerService {
         accumulator.concat(list)
       )
     );
+    this.deck[1].flip = true;
 
     // The deal proper is queued up behind the trigger subject.
     this.deal$ = this.trigger$.pipe(concat(
@@ -102,6 +103,7 @@ export class Card {
   constructor(suit: string, face: string) {
     this._suit = suit;
     this._face = face;
+    this._flip = false;
   }
 
   public get suit(): string {
