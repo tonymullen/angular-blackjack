@@ -1,4 +1,3 @@
-
 export class Card {
     _value: number;
     _suit: string;

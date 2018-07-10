@@ -41,15 +41,15 @@ export class DealerService {
 
     // The deal proper is queued up behind the trigger subject.
     this.deal$ = this.trigger$.pipe(concat(
+        zip(
+          timer(1000, 1000),
+          // Create Observable from shuffled deck & distribution
           zip(
-            timer(1000, 1000),
-            // Create Observable from shuffled deck & distribution
-            zip(
-                this.distribution$, 
-                from(this.deck)
-              )
+              this.distribution$, 
+              from(this.deck)
           )
         )
+      )
     )
   }
 
