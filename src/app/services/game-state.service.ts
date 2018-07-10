@@ -1,5 +1,6 @@
 import { Injectable  } from '@angular/core';
-import { DealerService, Card } from './dealer.service';
+import { Card } from '../shared/card';
+import { DealerService} from './dealer.service';
 
 const RESTART_WAIT: number = 3000;
 const MESSSAGE_WAIT: number = 1000;

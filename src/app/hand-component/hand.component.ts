@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
-import { Card } from '../services/dealer.service';
 import { GameStateService } from '../services/game-state.service';
-import { CardComponent } from '../card/card.component';
+import { CardComponent } from '../card-component/card.component';
+import { Card } from '../shared/card';
 
 @Component({
   selector: 'app-hand',

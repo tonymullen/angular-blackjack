@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, Subject, from, timer, zip  } from 'rxjs';
 import { concat } from 'rxjs/operators';
+import { Card } from '../shared/card';
 
 @Injectable({
   providedIn: 'root'
@@ -20,14 +21,13 @@ export class DealerService {
 
   constructor() {
     this.freshDeck();
-    //this.deal();
   }
 
   public freshDeck(): void {
     this.distribution$ = new Subject<string>();
     this.trigger$ = new Subject<boolean>();
 
-    this.deck = shuffle<Card>(
+    this.deck = this.shuffle<Card>(
     // Generate deck from suits and faces
        this.suits.map(s => 
         this.faces.map(f => 
@@ -74,51 +74,16 @@ export class DealerService {
     // add a dealer card to the distribution subject
     this.distribution$.next('d');
   }
-}
 
-export class Card {
-  _value: number;
-  _suit: string;
-  _face: string;
-  _flip: boolean;
-
-  constructor(suit: string, face: string) {
-    this._suit = suit;
-    this._face = face;
-    this._flip = false;
+  private shuffle<T>(array: T[]): T[]  {
+    let currentInd = array.length, temp, randInd;
+    while (0 !== currentInd) {
+      randInd = Math.floor(Math.random() * currentInd);
+      currentInd--;
+      temp = array[currentInd];
+      array[currentInd] = array[randInd];
+      array[randInd] = temp;
+    }
+    return array;
   }
-
-  public get suit(): string {
-    return this._suit;
-  }
-
-  public get face(): string {
-    return this._face;
-  }
-
-  public get value(): number {
-    return (this.face === 'king'  || 
-            this.face === 'queen' || 
-            this.face === 'jack') ? 10 : Number(this.face) 
-  }
-
-  public get flip(): boolean{
-    return this._flip;
-  }
-
-  public set flip(f: boolean) {
-    this._flip = f;
-  }
-}
-
-function shuffle<T>(array: T[]): T[]  {
-  let currentInd = array.length, temp, randInd;
-  while (0 !== currentInd) {
-    randInd = Math.floor(Math.random() * currentInd);
-    currentInd--;
-    temp = array[currentInd];
-    array[currentInd] = array[randInd];
-    array[randInd] = temp;
-  }
-  return array;
 }
