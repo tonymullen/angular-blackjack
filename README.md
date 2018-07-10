@@ -7,10 +7,10 @@ https://angular-blackjack.herokuapp.com/
 #### Playing card images from:
 https://github.com/htdebeer/SVG-cards
 
-### NGX flip
+##### NGX flip
 https://github.com/ritsrivastava01/ngxFlip
 
-### Placeholder logo
+#### Placeholder logo
 https://www.svgrepo.com/svg/68510/playing-cards
 
 

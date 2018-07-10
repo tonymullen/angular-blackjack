@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ViewChildren, QueryList, ChangeDetectorRef } from '@angular/core';
 import { GameStateService } from '../services/game-state.service';
-import { CardComponent } from '../card-component/card.component';
+import { CardComponent } from '../card-view/card-view.component';
 import { Card } from '../shared/card';
 
 @Component({
