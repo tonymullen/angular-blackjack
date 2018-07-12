@@ -243,9 +243,10 @@ export class GameStateService {
   }
 
   dealerShouldHit(): boolean {
+    // dealer hits on soft 17 (ace & 6), stays on all 18+
     return ( this.playerStays && 
           (this.dealerScore < 17 || 
-          (this.dealerHasAce && this.dealerScore < 27)));
+          (this.dealerHasAce && this.dealerScore < 7)));
   }
 
   setup(): void {
